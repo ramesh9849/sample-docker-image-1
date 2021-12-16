@@ -1,0 +1,18 @@
+pipeline {
+  agent any
+  environment {
+    DOCKER_CONFIG = credentials('jenkins-training-docker-config-json')
+  }
+  stages {
+    stage ('Build docker image') {
+      steps {
+        sh "docker build -t jenkinstraining.azurecr.io/sample-docker-image-55529:$BUILD_TAG ."
+      }
+    }
+    stage ('Push docker image to container registry') {
+      steps {
+        sh "export DOCKER_CONFIG=$(dirname $DOCKER_CONFIG); docker push jenkinstraining.azurecr.io/sample-docker-image-55529:$BUILD_TAG"
+      }
+    }
+  }
+}
